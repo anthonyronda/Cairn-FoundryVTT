@@ -1,0 +1,23 @@
+name: Sanity Upload
+on:
+  push:
+    branches: ["build/cairn-sanity-client"]
+    paths: "./packs/*"
+  workflow_dispatch:
+jobs:
+  sanity-import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Rename .db to .ndjson
+        run: find . -name '*.db' -exec sh -c 'mv "$0" "${0%.db}.ndjson"' {} \;
+      - name: Make tarball
+        run: tar cvzf packs.tar.gz ./packs
+      - name: Upload tarball to cloud
+        uses: anthonyronda/github-action-sanity@v0.4-alpha
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        with:
+          args: "./cairn-content-schema dataset import ../packs.tar.gz testing"

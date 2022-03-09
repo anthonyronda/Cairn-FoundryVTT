@@ -1,0 +1,19 @@
+name: Build and deploy SRD on GitHub Pages
+on:
+  repository_dispatch:
+    types: [fvtt_content_update]
+
+# Workflow with two jobs: "Build" then "Deploy"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Fetch dataset
+        uses: anthonyronda/github-action-sanity@v0.4-alpha
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        with:
+          args: "./cairn-content-schema documents query '*' > ../_data/documents.json"
