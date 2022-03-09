@@ -2,7 +2,7 @@ name: Sanity Upload
 on:
   push:
     branches: ["build/cairn-sanity-client"]
-    paths: "./packs/*"
+    # paths: "./packs/*"
   workflow_dispatch:
 jobs:
   sanity-import:
